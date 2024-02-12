@@ -3,8 +3,8 @@ InsureLink is a comprehensive insurance management system designed to streamline
 
 # Features
 **Plan Selection**: Users can browse through a variety of insurance plans offered by different insurance companies.
-Quote Generation: InsureLink allows users to obtain instant quotes for selected insurance plans based on their personal information and coverage preferences.
-Secure Payment Processing: InsureLink integrates with secure payment gateways to facilitate the payment of insurance premiums.
+**Quote Generation**: InsureLink allows users to obtain instant quotes for selected insurance plans based on their personal information and coverage preferences.
+**Secure Payment Processing**: InsureLink integrates with secure payment gateways to facilitate the payment of insurance premiums.
 **Email Notifications**: Automated email notifications are sent to users to confirm policy purchases, provide policy details, and send renewal reminders.
 
 # Technologies Used
