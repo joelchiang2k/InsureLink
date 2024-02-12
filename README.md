@@ -7,7 +7,7 @@ Quote Generation: InsureLink allows users to obtain instant quotes for selected 
 Secure Payment Processing: InsureLink integrates with secure payment gateways to facilitate the payment of insurance premiums.
 **Email Notifications**: Automated email notifications are sent to users to confirm policy purchases, provide policy details, and send renewal reminders.
 
-#Technologies Used
+# Technologies Used
 **Spring Boot**: Provides the backend framework for building robust and scalable Java applications.
 **MySQL**: A relational database management system used for storing user information, insurance plans, and policy data.
 **Hibernate**: An ORM (Object-Relational Mapping) framework used for mapping Java objects to database tables.
