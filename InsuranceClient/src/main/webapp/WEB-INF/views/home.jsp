@@ -1,5 +1,21 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
+
+<sec:authorize access="!isAuthenticated()">
+    
+    <div class="container" style="text-align: right; margin-top: 10px;">
+        <a href="login">Login</a>
+    </div>
+</sec:authorize>
+<sec:authorize access="isAuthenticated()">
+	<td>|</td>
+		<br>Granted Authorities: <sec:authentication property="principal.authorities"/>
+		<br> loggedInUser: ${loggedInUser}
+		<td></td>
+		<td><a href="login?logout">Logout</a></td>
+</sec:authorize>
+
 <head>
     <meta charset="UTF-8">
     <title>Insurance Selection</title>
@@ -9,7 +25,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Function to fetch company names from the server
+            
             function fetchCompanyNames() {
                 $.ajax({
                     type: "GET",
@@ -28,10 +44,10 @@
                 });
             }
 
-            // Call the function to fetch company names when the page loads
+            
             fetchCompanyNames();
 
-            // Function to fetch insurance plans based on selected company
+           
             function fetchPlansByCompany(company, type) {
                 $.ajax({
                     type: "GET",
@@ -40,7 +56,7 @@
                     dataType: "json",
                     success: function(response) {
                         var plansHtml = generatePlansHtml(response);
-                        $("#plansContainer").html(plansHtml); // Update plans container with response
+                        $("#plansContainer").html(plansHtml); 
                     },
                     error: function(xhr, status, error) {
                         console.error("Error:", error);
@@ -48,42 +64,55 @@
                 });
             }
             
-            // Event handler for form submission
+            
             $("#insuranceForm").submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault(); 
                 var insuranceType = $("#insuranceType").val();
                 var insuranceCompany = $("#insuranceCompany").val();
                 console.log(insuranceType, insuranceCompany);
                 fetchPlansByCompany(insuranceCompany, insuranceType);
             });
 
-            // Function to generate HTML for insurance plans
+            
             function generatePlansHtml(plans) {
-                var html = '<table class="table table-striped">';
-                html += '<thead>';
-                html += '<tr>';
-                html += '<th>Plan Name</th>';
-                html += '<th>Description</th>';
-                html += '<th>Premium</th>';
-                html += '</tr>';
-                html += '</thead>';
-                html += '<tbody>';
-
-                for (var i = 0; i < plans.length; i++) {
-                    var plan = plans[i];
-                    html += '<tr>';
-                    html += '<td>' + plan.planName + '</td>';
-                    html += '<td>' + plan.description + '</td>';
-                    html += '<td>' + plan.premium + '</td>';
-                    html += '</tr>';
-                }
-
-                html += '</tbody>';
-                html += '</table>';
-
-                return html;
-            }
+			    var html = '<table class="table table-striped">';
+			    html += '<thead>';
+			    html += '<tr>';
+			    html += '<th>Plan Name</th>';
+			    html += '<th>Description</th>';
+			    html += '<th>Collision Deductible (per 6 months)</th>';
+			    html += '<th>Uninsured Motorist Deductible (per 6 months)</th>';
+			    html += '<th>Premium</th>';
+			    html += '<th>Select Plan</th>'; // New column for the select button
+			    html += '</tr>';
+			    html += '</thead>';
+			    html += '<tbody>';
+			
+			    for (var i = 0; i < plans.length; i++) {
+			    	
+			        var plan = plans[i];
+			        console.log(plan.insurancePlanId)
+			        html += '<tr>';
+			        html += '<td>' + plan.planName + '</td>';
+			        html += '<td>' + plan.description + '</td>';
+			        html += '<td>' + '$' + plan.collisionDeductible + '</td>';
+			        html += '<td>' + '$' + plan.uninsuredMotoristDeductible + '</td>';
+			        html += '<td>' + '$' + plan.premium + '</td>';
+			        html += '<td><button class="btn btn-primary" onclick="selectPlan(' + plan.insurancePlanId + ')">Select</button></td>'; 
+			        html += '</tr>';
+			    }
+			
+			    html += '</tbody>';
+			    html += '</table>';
+			
+			    return html;
+			}
         });
+        
+        function selectPlan(insurancePlanId) {
+        	var email = $("#email").val();
+	        window.location.href = "driverInfo?insurancePlanId=" + insurancePlanId + "&email=" + email;
+	    }
     </script>
 </head>
 <body>
@@ -115,7 +144,9 @@
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
                         <!-- Add more fields as needed -->
+                    <sec:authorize access="hasAuthority('Admin') or hasAuthority('User')">
                     <button type="submit" class="btn btn-primary">Show Plans</button>
+                    </sec:authorize>
                 </form>
             </div>
         </div>
@@ -125,6 +156,7 @@
                 <div id="plansContainer"></div>
             </div>
         </div>
+        
     </div>
 </body>
 </html>

@@ -66,5 +66,19 @@ public class InsurancePlan {
 	}
 	private String insuranceType;
     private String description;
-    private double premium;
+    private Integer collisionDeductible;
+    private Integer uninsuredMotoristDeductible;
+    public Integer getCollisionDeductible() {
+		return collisionDeductible;
+	}
+	public void setCollisionDeductible(Integer collisionDeductible) {
+		this.collisionDeductible = collisionDeductible;
+	}
+	public Integer getUninsuredMotoristDeductible() {
+		return uninsuredMotoristDeductible;
+	}
+	public void setUninsuredMotoristDeductible(Integer uninsuredMotoristDeductible) {
+		this.uninsuredMotoristDeductible = uninsuredMotoristDeductible;
+	}
+	private double premium;
 }

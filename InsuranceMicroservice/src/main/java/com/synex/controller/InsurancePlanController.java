@@ -24,12 +24,12 @@ public class InsurancePlanController {
     	System.out.println(insuranceType);
         List<InsurancePlan> plans = insurancePlanService.getPlansByType(insuranceType);
         
-        for (InsurancePlan plan : plans) {
-            System.out.println("Plan Name: " + plan.getPlanName());
-            System.out.println("Description: " + plan.getDescription());
-            System.out.println("Premium: " + plan.getPremium());
-            // Add additional properties as needed
-        }
+//        for (InsurancePlan plan : plans) {
+//            System.out.println("Plan Name: " + plan.getPlanName());
+//            System.out.println("Description: " + plan.getDescription());
+//            System.out.println("Premium: " + plan.getPremium());
+//            // Add additional properties as needed
+//        }
         return plans;
     }
     

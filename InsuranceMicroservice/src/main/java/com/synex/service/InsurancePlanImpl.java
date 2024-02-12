@@ -1,10 +1,12 @@
 package com.synex.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.synex.domain.Driver;
 import com.synex.domain.InsurancePlan;
 import com.synex.repository.InsurancePlanRepository;
 
@@ -17,19 +19,22 @@ public class InsurancePlanImpl implements InsurancePlanService {
 	@Override
 	public InsurancePlan save(InsurancePlan insurancePlan) {
 		// TODO Auto-generated method stub
-		return null;
+		return insurancePlanRepository.save(insurancePlan);
 	}
 
 	@Override
 	public InsurancePlan findById(Integer insurancePlanId) {
-		// TODO Auto-generated method stub
+		Optional<InsurancePlan> optInsurancePlan = insurancePlanRepository.findById(insurancePlanId);
+		if(optInsurancePlan.isPresent()) {
+			return optInsurancePlan.get();
+		}
 		return null;
 	}
 
 	@Override
 	public List<InsurancePlan> findAll() {
 		// TODO Auto-generated method stub
-		return null;
+		return insurancePlanRepository.findAll();
 	}
 
 	@Override
@@ -52,11 +57,7 @@ public class InsurancePlanImpl implements InsurancePlanService {
 	
 	@Override
 	public List<InsurancePlan> getPlansByType(String insuranceType) {
-        // Implement logic to fetch plans based on the provided insurance type
-        // For example, you can use the repository to query the database
-        // This is a placeholder implementation
-        
-        // Assuming you have a method in your repository to fetch plans by type
+      
         List<InsurancePlan> plans = insurancePlanRepository.findByInsuranceType(insuranceType);
         
         return plans;
@@ -64,11 +65,7 @@ public class InsurancePlanImpl implements InsurancePlanService {
 	
 	 @Override
 	    public List<InsurancePlan> getPlansByCompany(String company) {
-	        // Implement logic to fetch plans based on the provided company
-	        // For example, you can use the repository to query the database
-	        // This is a placeholder implementation
-	        
-	        // Assuming you have a method in your repository to fetch plans by company
+	       
 	        List<InsurancePlan> plans = insurancePlanRepository.findByCompany(company);
 	        
 	        return plans;

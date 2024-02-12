@@ -70,9 +70,9 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 		.apply(MyCustomDsl.customDsl()).flag(true).and()
-		.authorizeRequests().requestMatchers("/", "/home").permitAll().and()
+		.authorizeRequests().requestMatchers("/", "/home","/Home").permitAll().and()
 		.authorizeRequests().requestMatchers("/confirmBooking")
-		.hasAnyAuthority("User","Admin").and().formLogin().loginPage("/login").defaultSuccessUrl("/home")
+		.hasAnyAuthority("User","Admin").and().formLogin().loginPage("/login").defaultSuccessUrl("/Home")
 		.permitAll().and().logout().logoutSuccessUrl("/login?logout").invalidateHttpSession(true)
 		.deleteCookies("JSESSIONID").permitAll();
 		
