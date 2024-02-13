@@ -20,7 +20,7 @@ public class InsurancePlanController {
     @GetMapping("/getPlansByInsurance")
     @CrossOrigin(origins = "http://localhost:8282")
     public List<InsurancePlan> getPlansByInsurance(@RequestParam String insuranceType) {
-        // Call service method to fetch plans based on the selected insurance type
+     
     	System.out.println(insuranceType);
         List<InsurancePlan> plans = insurancePlanService.getPlansByType(insuranceType);
         

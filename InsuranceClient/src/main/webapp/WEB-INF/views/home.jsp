@@ -143,7 +143,7 @@
                         <label for="email">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                        <!-- Add more fields as needed -->
+                       
                     <sec:authorize access="hasAuthority('Admin') or hasAuthority('User')">
                     <button type="submit" class="btn btn-primary">Show Plans</button>
                     </sec:authorize>

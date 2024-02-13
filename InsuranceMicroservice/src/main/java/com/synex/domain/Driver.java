@@ -21,7 +21,7 @@ public class Driver {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "insurancePlan_id", referencedColumnName = "insurancePlanId")
     private InsurancePlan insurancePlan;
     
@@ -41,7 +41,7 @@ public class Driver {
 		this.vehicle = vehicle;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
     private Vehicle vehicle;
     

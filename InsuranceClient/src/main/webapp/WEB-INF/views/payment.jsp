@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <!-- Include Stripe.js -->
+    
     <script src="https://js.stripe.com/v3/"></script>
      <style>
-        /* Add some basic styling */
+       
         .container {
             max-width: 400px;
             margin: 0 auto;
@@ -116,7 +116,7 @@
         var driverId = getQueryParam('driverId');
         console.log("driver" + driverId);
         $(document).ready(function() {
-            // Make AJAX call to retrieve payment data
+         
             $.ajax({
 			    url: 'http://localhost:8484/getDriverInfo?driverId=' + driverId,
 			    type: 'GET',
@@ -136,19 +136,18 @@
 			    }
 			});
 
-            // Create a Stripe instance
+           
             var stripe = Stripe('pk_test_51Oinm5JMmVc9VE0etJG00xkFa36lsu9BW7Vu315xKaVIiU4GbpyzM0w56jUPPhaAvwqUbFUtW1MGYSIfOr3iuj5w003QTs60K5');
-            
-            // Create an instance of Elements
+                  
             var elements = stripe.elements();
 
-            // Create an instance of the card Element
+           
             var card = elements.create('card');
 
-            // Add an instance of the card Element into the `card-element` div
+      
             card.mount('#card-element');
 
-            // Handle real-time validation errors from the card Element
+         
             card.addEventListener('change', function(event) {
                 var displayError = document.getElementById('card-errors');
                 if (event.error) {
@@ -158,37 +157,48 @@
                 }
             });
 
-            // Handle form submission
             $('#payment-form').submit(function(event) {
-                event.preventDefault();
-                // Disable the submit button to prevent multiple submissions
-                $('button[type="submit"]').prop('disabled', true);
-                // Create a payment method and confirm the payment
-                stripe.createPaymentMethod({
-                    type: 'card',
-                    card: card,
-                    billing_details: {
-                        name: $('#cardholder-name').val()
-                    }
-                }).then(function(result) {
-                    if (result.error) {  //handle error
-                        // Display error message to the user
-                        $('#card-errors').text(result.error.message);
-                        // Re-enable the submit button
-                        $('button[type="submit"]').prop('disabled', false);
-                    } else {
-                        //submit method
-                        var paymentMethodId = result.paymentMethod.id;
-                        $('<input>').attr({
-                            type: 'hidden',
-                            name: 'paymentMethodId',
-                            value: paymentMethodId
-                        }).appendTo('#payment-form');
-                    
-                        window.location.href = 'http://localhost:8282/success';
-                    }
-                });
-            });
+			    event.preventDefault();
+			    $('button[type="submit"]').prop('disabled', true);
+			
+			    stripe.createPaymentMethod({
+			        type: 'card',
+			        card: card,
+			        billing_details: {
+			            name: $('#cardholder-name').val()
+			        }
+			    }).then(function(result) {
+			        if (result.error) {
+			            $('#card-errors').text(result.error.message);
+			            $('button[type="submit"]').prop('disabled', false);
+			        } else {
+			            var paymentMethodId = result.paymentMethod.id;
+			            console.log("payment", paymentMethodId);
+			            console.log("driver", driverId);
+			            var amount = parseFloat($('#price').text().replace('$', ''));
+			            console.log("amount", amount);
+			            $.ajax({
+			                url: 'http://localhost:8484/create-payment-intent', 
+			                type: 'POST',
+			                contentType: 'application/json',
+			                data: JSON.stringify({
+						        paymentMethodId: paymentMethodId,
+						        driverId: driverId,
+						        amount: amount
+						    }),
+			                success: function(response) {
+			                    
+			                    window.location.href = 'http://localhost:8282/success';
+			                },
+			                error: function(xhr, status, error) {
+			                    
+			                    console.error('Error processing payment:', error);
+			                    $('button[type="submit"]').prop('disabled', false);
+			                }
+			            });
+			        }
+			    });
+			});
         });
     </script>
 </body>

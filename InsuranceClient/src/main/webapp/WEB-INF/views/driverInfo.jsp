@@ -30,9 +30,7 @@
                 var zipCode = $("#zipCode").val();
                 
 				
-                // Perform client-side validation if needed
-
-                // AJAX POST request to submit the form data to the server
+               
                 $.ajax({
                     type: "POST",
                     url: "http://localhost:8484/submitDriverInfo",
@@ -51,12 +49,12 @@
                     success: function(response) {
                         var driverId = response; // Assuming the driverId is returned in the response
         
-				        // Redirect to the vehicle form with the driverId in the URL
+				        
 				        window.location.href = "http://localhost:8282/vehicleForm?driverId=" + driverId;
                       
                     },
                     error: function(xhr, status, error) {
-                        // Handle error response
+                        
                         alert("Error occurred while submitting form: " + error);
                     }
                 });

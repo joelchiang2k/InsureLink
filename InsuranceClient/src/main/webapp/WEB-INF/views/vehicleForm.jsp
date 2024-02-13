@@ -53,7 +53,7 @@
 		        var model = $("#model").val();
 		        var year = $("#year").val();
 		
-		        // Create JSON object with form data
+		       
 		        var formData = {
 		            "vin": vin,
 		            "make": make,
@@ -62,21 +62,21 @@
 		            "driverId": driverId
 		        };
 				console.log(formData);
-		        // AJAX POST request to submit form data
+		        
 		        $.ajax({
 		            type: "POST",
 		            url: "http://localhost:8484/submitVehicleForm",
 		            
-		            contentType: "application/json", // Set content type to JSON
-		            data: JSON.stringify(formData), // Stringify JSON object
+		            contentType: "application/json", 
+		            data: JSON.stringify(formData), 
 		            success: function(response){
-		                // Handle success response
+		               
 		                console.log(response);
-		                // Optionally redirect to another page
+		                
 		                window.location.href = "http://localhost:8282/payment?driverId=" + driverId;
 		            },
 		            error: function(xhr, status, error){
-		                // Handle error
+		               
 		                console.error(xhr.responseText);
 		            }
 		        });
