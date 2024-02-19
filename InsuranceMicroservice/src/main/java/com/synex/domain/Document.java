@@ -12,10 +12,32 @@ public class Document {
     private byte[] driverLicense;
 
     private String fileName;
+    
+    private String status;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "driver_id", referencedColumnName = "id")
+    private Driver driver; 
 
     // Constructors, getters, and setters
 
-    public Document() {
+    public Driver getDriver() {
+		return driver;
+	}
+
+	public void setDriver(Driver driver) {
+		this.driver = driver;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Document() {
     }
 
     public Document(byte[] driverLicense, String fileName) {

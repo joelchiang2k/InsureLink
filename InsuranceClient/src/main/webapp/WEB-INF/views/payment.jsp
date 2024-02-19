@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
+<td><a href="login?logout">Logout</a></td>
+		<sec:authorize access="hasAuthority('User')">
+             <td><a href="Home">Home</a></td>
+			 <td><a href="claim">Claim</a></td> 
+</sec:authorize>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -202,7 +207,7 @@
 								            console.error('Error sending email:', error);
 								        }
 								    });
-			                    //window.location.href = 'http://localhost:8282/success';
+			                    window.location.href = 'http://localhost:8282/success';
 			                },
 			                error: function(xhr, status, error) {
 			                    

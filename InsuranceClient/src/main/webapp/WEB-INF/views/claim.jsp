@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<td><a href="Home">Home</a></td>
+<td><a href="login?logout">Logout</a></td>
+		<sec:authorize access="hasAuthority('User')">
+             <td><a href="Home">Home</a></td>
+			 <td><a href="claim">Claim</a></td> 
+</sec:authorize>
 <body>
     <div class="container">
         <h1 class="mt-4 mb-4">Claim Intimation</h1>

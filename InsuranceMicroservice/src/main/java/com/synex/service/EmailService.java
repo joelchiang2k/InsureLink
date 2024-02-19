@@ -61,6 +61,7 @@ public class EmailService {
 	
 	public String getEmailBody(Driver driver) {
 	    InsurancePlan insurance = driver.getInsurancePlan();
+	    String uploadUrlWithId = uploadUrl + "?driverId=" + driver.getId();
 	    String htmlTemplate = """
 	            <!DOCTYPE html>
 	            <html>
@@ -96,7 +97,7 @@ public class EmailService {
 	                insurance.getPremium(),
 	                insurance.getCollisionDeductible(),
 	                insurance.getUninsuredMotoristDeductible(),
-	                uploadUrl
+	                uploadUrlWithId
 	            );
 
 	    return htmlTemplate;

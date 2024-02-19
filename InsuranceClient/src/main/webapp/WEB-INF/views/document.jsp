@@ -22,10 +22,19 @@
 </div>
 
 <script>
+ function getQueryParam(param) {
+	        const urlParams = new URLSearchParams(window.location.search);
+	        return urlParams.get(param);
+	    }
+	    
+	    var driverId = getQueryParam('driverId');
+	    
 $(document).ready(function() {
     $('#uploadForm').submit(function(event) {
         event.preventDefault();
         var formData = new FormData($(this)[0]);
+        
+        formData.append('driverId', driverId);
 
         $.ajax({
             url: 'http://localhost:8484/uploadDocument',

@@ -15,8 +15,16 @@
 		
 		<td></td>
 		<td><a href="login?logout">Logout</a></td>
-		<td><a href="#" id="checkPolicyLink">Check Policy</a></td>
-		<td><a href="claim">Claim</a></td>
+		<sec:authorize access="hasAuthority('User')">
+             <td><a href="#" id="checkPolicyLink">Check Policy</a></td>
+			 <td><a href="claim">Claim</a></td> 
+        </sec:authorize>
+        
+        <sec:authorize access="hasAuthority('Admin')">
+             <td><a href="reviewClaim">Review Claim</a></td>
+			 <td><a href="reviewDoc">Review Document</a></td> 
+        </sec:authorize>
+		
 
 </sec:authorize>
 

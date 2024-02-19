@@ -10,6 +10,12 @@ public class Claim {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	private Long amount;
 	public Long getAmount() {
 		return amount;
@@ -31,5 +37,12 @@ public class Claim {
 	}
 	private Long policyNumber;
 	private String reason;
+	private String claimStatus;
+	public String getClaimStatus() {
+		return claimStatus;
+	}
+	public void setClaimStatus(String claimStatus) {
+		this.claimStatus = claimStatus;
+	}
 	
 }

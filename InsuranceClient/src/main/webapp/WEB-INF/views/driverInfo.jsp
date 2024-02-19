@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+<td><a href="login?logout">Logout</a></td>
+		<sec:authorize access="hasAuthority('User')">
+             <td><a href="Home">Home</a></td>
+			 <td><a href="claim">Claim</a></td> 
+</sec:authorize>
 <head>
     <meta charset="UTF-8">
     <title>Driver Information</title>

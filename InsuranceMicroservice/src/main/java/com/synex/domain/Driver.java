@@ -13,7 +13,17 @@ public class Driver {
     
     private String status;
     
-    private Long userId;
+    private String claimStatus;
+    
+    public String getClaimStatus() {
+		return claimStatus;
+	}
+
+	public void setClaimStatus(String claimStatus) {
+		this.claimStatus = claimStatus;
+	}
+
+	private Long userId;
     
     public Long getUserId() {
 		return userId;

@@ -23,7 +23,7 @@
 	<td>|</td>
 		<br>Granted Authorities: <sec:authentication property="principal.authorities"/>
 		<br> loggedInUser: ${loggedInUser}
-		<td><a href="logout">Logout</a></td>
+		<td><a href="login?logout">Logout</a></td>
 	</sec:authorize>
 	<td></td>
 	<td></td>
