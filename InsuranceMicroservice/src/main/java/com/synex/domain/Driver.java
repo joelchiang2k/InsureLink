@@ -10,8 +10,28 @@ public class Driver {
     private Long id;
 
     private String name;
+    
+    private String status;
+    
+    private Long userId;
+    
+    public Long getUserId() {
+		return userId;
+	}
 
-    private Integer age;
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	private Integer age;
 
     private Integer drivingRecord;
 

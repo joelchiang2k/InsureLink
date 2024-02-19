@@ -187,8 +187,22 @@
 						        amount: amount
 						    }),
 			                success: function(response) {
+			                    console.log("response", JSON.stringify(response.driver));
 			                    
-			                    window.location.href = 'http://localhost:8282/success';
+			                     $.ajax({
+								        url: 'http://localhost:8484/createEmail',
+								        type: 'POST',
+								        contentType: 'application/json',
+								        data: JSON.stringify(response.driver),
+								        success: function(emailResponse) {
+		
+								            console.log("Email sent successfully:", emailResponse);
+								        },
+								        error: function(xhr, status, error) {
+								            console.error('Error sending email:', error);
+								        }
+								    });
+			                    //window.location.href = 'http://localhost:8282/success';
 			                },
 			                error: function(xhr, status, error) {
 			                    

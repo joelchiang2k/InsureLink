@@ -16,12 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class InsuranceController {    
-    @RequestMapping("Home")
-    public String insuranceHomePage(Model model, Principal principal) {
-        String loggedInUser = principal != null ? principal.getName() : "Guest";
-        model.addAttribute("loggedInUser", loggedInUser);
-        return "home";
-    }    
+public class DocumentController {	
+	@RequestMapping("document")
+	public String documentPage() {
+		return "document";
+	}
+	
 }
-

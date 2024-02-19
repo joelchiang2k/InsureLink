@@ -14,6 +14,8 @@ public interface DriverService {
 	public Driver save(Driver driver);
     public Driver findById(Long driverId);
     public List<Driver> findAll();
+    List<Driver> findByUserId(Long userId);
+    
 
    
 }

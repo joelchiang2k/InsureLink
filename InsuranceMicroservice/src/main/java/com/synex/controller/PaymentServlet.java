@@ -9,7 +9,10 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentMethod;
 import com.stripe.param.PaymentIntentCreateParams;
+import com.synex.domain.Driver;
 import com.synex.domain.PaymentIntentRequest;
+import com.synex.domain.PaymentResponse;
+import com.synex.service.DriverService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,6 +23,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PaymentServlet {
-
+	
+	@Autowired DriverService driverService;
+	
     @Value("${stripe.secretKey}")
     private String stripeSecretKey;
 
@@ -40,7 +47,7 @@ public class PaymentServlet {
       
         System.out.println(request.getAmount());
         try {
-         
+        	Driver driver = driverService.findById(Long.parseLong(request.getDriverId()));
             long amount = request.getAmount() * 100;
             PaymentMethod paymentMethod = PaymentMethod.retrieve(request.getPaymentMethodId());
             System.out.println("paymentMethod" + paymentMethod.getType());
@@ -52,8 +59,11 @@ public class PaymentServlet {
                     .build();
 
             PaymentIntent paymentIntent = PaymentIntent.create(params);
+            PaymentResponse response = new PaymentResponse();
+            response.setClientSecret(paymentIntent.getClientSecret());
+            response.setDriver(driver);
             System.out.println(paymentIntent);
-            return ResponseEntity.ok(paymentIntent.getClientSecret());
+            return ResponseEntity.ok(response);
         } catch (StripeException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating payment intent");

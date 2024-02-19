@@ -16,50 +16,60 @@
 	    
 	    var email = getQueryParam('email');
 	    var insurancePlanId = getQueryParam('insurancePlanId');
+	    var user = getQueryParam('loggedInUser');
+	    console.log("user" + user);
 	    console.log("insurance" + insurancePlanId)
 	    console.log("email" + email);
         $(document).ready(function() {
-            $("#submitBtn").click(function() {
-                var name = $("#name").val();
-                var age = $("#age").val();
-                var drivingRecord = $("#drivingRecord").val();
-                var vehicleValue = $("#vehicleValue").val();
-                var street = $("#street").val();
-                var city = $("#city").val();
-                var state = $("#state").val();
-                var zipCode = $("#zipCode").val();
-                
-				
-               
-                $.ajax({
-                    type: "POST",
-                    url: "http://localhost:8484/submitDriverInfo",
-                    data: {
-                        name: name,
-                        email: email,
-                        age: age,
-                        drivingRecord: drivingRecord,
-                        vehicleValue: vehicleValue,
-                        street: street,
-                        city: city,
-                        state: state,
-                        zipCode: zipCode,
-                        insurancePlanId: insurancePlanId
-                    },
-                    success: function(response) {
-                        var driverId = response; // Assuming the driverId is returned in the response
-        
-				        
-				        window.location.href = "http://localhost:8282/vehicleForm?driverId=" + driverId;
-                      
-                    },
-                    error: function(xhr, status, error) {
-                        
-                        alert("Error occurred while submitting form: " + error);
-                    }
-                });
-            });
-        });
+		    $("#submitBtn").click(function() {
+		        var name = $("#name").val();
+		        var age = $("#age").val();
+		        var drivingRecord = $("#drivingRecord").val();
+		        var vehicleValue = $("#vehicleValue").val();
+		        var street = $("#street").val();
+		        var city = $("#city").val();
+		        var state = $("#state").val();
+		        var zipCode = $("#zipCode").val();
+		  
+		
+		        $.ajax({
+		            type: "POST",
+		            url: "http://localhost:8282/findUserId",
+		            data: user,
+		            success: function(userIdResponse) {
+		                var userId = userIdResponse;
+		
+		                $.ajax({
+		                    type: "POST",
+		                    url: "http://localhost:8484/submitDriverInfo",
+		                    data: {
+		                        name: name,
+		                        email: email,
+		                        age: age,
+		                        drivingRecord: drivingRecord,
+		                        vehicleValue: vehicleValue,
+		                        street: street,
+		                        city: city,
+		                        state: state,
+		                        zipCode: zipCode,
+		                        insurancePlanId: insurancePlanId,
+		                        userId: userId
+		                    },
+		                    success: function(driverIdResponse) {
+		                        var driverId = driverIdResponse; // Assuming the driverId is returned in the response
+		                        window.location.href = "http://localhost:8282/vehicleForm?driverId=" + driverId + "&userId=" + userId;
+		                    },
+		                    error: function(xhr, status, error) {
+		                        alert("Error occurred while submitting driver info: " + error);
+		                    }
+		                });
+		            },
+		            error: function(xhr, status, error) {
+		                alert("Error occurred while finding user ID: " + error);
+		            }
+		        });
+		    });
+		});
     </script>
     <style>
         .form-group {

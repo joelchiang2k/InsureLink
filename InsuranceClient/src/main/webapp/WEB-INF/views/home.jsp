@@ -10,10 +10,14 @@
 </sec:authorize>
 <sec:authorize access="isAuthenticated()">
 	<td>|</td>
-		<br>Granted Authorities: <sec:authentication property="principal.authorities"/>
 		<br> loggedInUser: ${loggedInUser}
+		<br>Granted Authorities: <sec:authentication property="principal.authorities"/>
+		
 		<td></td>
 		<td><a href="login?logout">Logout</a></td>
+		<td><a href="#" id="checkPolicyLink">Check Policy</a></td>
+		<td><a href="claim">Claim</a></td>
+
 </sec:authorize>
 
 <head>
@@ -111,8 +115,35 @@
         
         function selectPlan(insurancePlanId) {
         	var email = $("#email").val();
-	        window.location.href = "driverInfo?insurancePlanId=" + insurancePlanId + "&email=" + email;
+        	var loggedInUser = "${loggedInUser}";
+	        var url = "driverInfo?insurancePlanId=" + insurancePlanId + "&email=" + email + "&loggedInUser=" + loggedInUser;
+   	 		window.location.href = url;
 	    }
+	    
+	    $("#checkPolicyLink").click(function(event) {
+	        // Prevent the default behavior of the link
+	        event.preventDefault();
+	
+	     	var loggedInUser = "${loggedInUser}";
+	
+	        // Make an AJAX call to findUserId
+	        $.ajax({
+	            type: "POST",
+	            url: "http://localhost:8282/findUserId",
+	            data: loggedInUser,
+	            success: function(response) {
+	                
+	                var userId = response; 
+	                var url = "http://localhost:8282/policies?userId=" + userId;
+	
+	                // Navigate to the URL
+	                window.location.href = url;
+	            },
+	            error: function(xhr, status, error) {
+	                console.error("Error occurred while finding user ID:", error);
+	            }
+	        });
+	    });
     </script>
 </head>
 <body>

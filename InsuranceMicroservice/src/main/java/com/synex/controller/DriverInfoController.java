@@ -36,13 +36,16 @@ public class DriverInfoController {
                                          @RequestParam String state,
                                          @RequestParam String zipCode,
                                          @RequestParam String email,
-                                         @RequestParam int insurancePlanId) {
+                                         @RequestParam int insurancePlanId,
+                                         @RequestParam Long userId) {
      	
     	Driver driver = new Driver();
     	driver.setName(name);
     	driver.setAge(age);
     	driver.setDrivingRecord(drivingRecord);
     	driver.setVehicleValue(vehicleValue);
+    	driver.setUserId(userId);
+    	driver.setStatus("Pending");
     	
     	Address address = new Address();
     	address.setEmail(email);
@@ -65,13 +68,9 @@ public class DriverInfoController {
         return ResponseEntity.ok(savedDriver.getId());
     }
     
-//    @PostMapping("/getDriverInfo")
-//    @CrossOrigin(origins = "http://localhost:8282")
-//    public Driver getDriverInfo() {
-//     	
-//    	return driver;
-//    }
-//    
+ 
+
+    
     
 
     
