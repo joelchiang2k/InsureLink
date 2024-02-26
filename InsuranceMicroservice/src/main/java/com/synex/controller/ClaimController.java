@@ -1,5 +1,6 @@
 package com.synex.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,12 +14,16 @@ import com.synex.service.CompanyService;
 import com.synex.service.DriverService;
 import com.synex.service.InsurancePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class ClaimController {
@@ -31,14 +36,39 @@ public class ClaimController {
 
     @PostMapping("/saveClaim")
     @CrossOrigin(origins = "http://localhost:8282")
-    public void saveClaim(@RequestBody Claim claim) {
-       System.out.println(claim.getAmount());
-       Driver driver = driverService.findById(claim.getPolicyNumber());
-       driver.setClaimStatus("Pending");
-       
-       claim.setClaimStatus("Pending");
-       
-       claimService.save(claim);
+    public ResponseEntity<String> saveClaim(@RequestParam("policyNumber") Long policyNumber,
+                                            @RequestParam("amount") Long amount,
+                                            @RequestParam("reason") String reason,
+                                            @RequestPart("mishapImages") MultipartFile mishapImages) {
+        try {
+            // Retrieve or create the driver object and set claim status
+            Driver driver = driverService.findById(policyNumber);
+            if (driver == null) {
+                // Handle case where driver is not found
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Driver not found");
+            }
+            driver.setClaimStatus("Pending");
+            driverService.save(driver);
+            
+            // Create a new claim object
+            byte[] mishapImagesBytes = mishapImages.getBytes();
+            Claim claim = new Claim(mishapImagesBytes);
+            claim.setPolicyNumber(policyNumber);
+            claim.setAmount(amount);
+            System.out.println(reason);
+            claim.setReason(reason);
+            claim.setClaimStatus("Pending");
+
+            
+
+            // Save the claim after adding all mishap images
+            claimService.save(claim);
+            
+            return ResponseEntity.ok("Claim saved successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing mishap images");
+        }
     }
     
     @GetMapping("/getPendingClaims")

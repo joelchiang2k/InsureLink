@@ -89,8 +89,8 @@
 		
 		                // Add approve and reject buttons
 		                if (status === "pending") {
-						    documentHtml += '<button class="btn btn-success mr-2" onclick="approveDocument(' + document.id + ')">Approve</button>' +
-						                    '<button class="btn btn-danger" onclick="rejectDocument(' + document.id + ')">Reject</button>' +
+						    documentHtml += '<button class="btn btn-success mr-2" onclick="approveDocument(' + document.id + ', \'' + document.driver.id + '\')">Approve</button>' +
+						                    '<button class="btn btn-danger" onclick="rejectDocument(' + document.id + ', \'' + document.driver.id + '\')">Reject</button>' +
 						                    '<br>' +
 						                    '<button class="btn btn-info mt-2" onclick="showDriverDetails(\'' + document.driver.id + '\')">Show Driver Details</button>';
 						}
@@ -142,11 +142,11 @@
 	    }
 	
 	    // Define approve and reject functions outside of $(document).ready()
-	    function approveDocument(documentId) {
+	    function approveDocument(documentId, driverId) {
 	        $.ajax({
 	            type: "POST",
 	            url: "http://localhost:8484/approveDocument",
-	            data: { documentId: documentId },
+	            data: { documentId: documentId, driverId: driverId},
 	            success: function(response) {
 	                // Reload the approved documents tab
 	                loadDocuments("approved", "#approvedDocuments");
@@ -159,11 +159,11 @@
 	        });
 	    }
 	
-	    function rejectDocument(documentId) {
+	    function rejectDocument(documentId, driverId) {
 	        $.ajax({
 	            type: "POST",
 	            url: "http://localhost:8484/rejectDocument",
-	            data: { documentId: documentId },
+	            data: { documentId: documentId, driverId: driverId},
 	            success: function(response) {
 	                // Reload the rejected documents tab
 	                loadDocuments("rejected", "#rejectedDocuments");

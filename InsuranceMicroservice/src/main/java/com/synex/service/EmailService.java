@@ -25,9 +25,34 @@ public class EmailService {
 	@Autowired InsurancePlanService insurancePlanService;
 	@Value("${upload.url}")
     private String uploadUrl;
+	
+	@Value("${reapply.url}")
+    private String reapplyUrl;
 
 	@Async
 	public void sendDriverConfirmation(Driver driver) {
+		Address address = driver.getAddress();
+        System.out.println(driver.getId());
+        System.out.println("email" + driver.getAddress().getEmail());
+        
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            
+            // Create the text part of the email
+            helper.setTo(address.getEmail());
+            helper.setSubject("Upload documents for verification.");
+            helper.setText(getEmailBodyPending(driver), true); // Set HTML content
+            
+            // Send the email
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Email Sending Exception: " + e.getMessage());
+        }
+    }
+	
+	@Async
+	public void sendDriverApproval(Driver driver) {
 		Address address = driver.getAddress();
 		System.out.println(driver.getId());
 		System.out.println("email" + driver.getAddress().getEmail());
@@ -42,11 +67,11 @@ public class EmailService {
 			attachmentPart.setFileName("invoice.pdf");
 			
 			MimeBodyPart textPart = new MimeBodyPart();
-			textPart.setContent(this.getEmailBody(driver), "text/html;charset=UTF-8");
+			textPart.setContent(this.getEmailBodyApproved(driver), "text/html;charset=UTF-8");
 			
 			
 			helper.setTo(address.getEmail());
-			helper.setSubject("Thanks for booking!");
+			helper.setSubject("Congratulations, you have been approved!");
 			
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(attachmentPart); //pdf
@@ -59,14 +84,56 @@ public class EmailService {
 		}
 	}
 	
-	public String getEmailBody(Driver driver) {
-	    InsurancePlan insurance = driver.getInsurancePlan();
+	@Async
+	public void sendDriverRejection(Driver driver) {
+		Address address = driver.getAddress();
+        System.out.println(driver.getId());
+        System.out.println("email" + driver.getAddress().getEmail());
+        
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            
+            // Create the text part of the email
+            helper.setTo(address.getEmail());
+            helper.setSubject("Unforunately, your application has been rejected.");
+            helper.setText(getEmailBodyRejected(driver), true); // Set HTML content
+            
+            // Send the email
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Email Sending Exception: " + e.getMessage());
+        }
+	}
+	
+	public String getEmailBodyPending(Driver driver) {
+	    //InsurancePlan insurance = driver.getInsurancePlan();
 	    String uploadUrlWithId = uploadUrl + "?driverId=" + driver.getId();
+	    
+	    String htmlTemplate = """
+	    	    <!DOCTYPE html>
+	    	    <html>
+	    	    <head>
+	    	        <title>Upload Documents</title>
+	    	    </head>
+	    	    <body>
+	    	        <h1>Upload Your Documents</h1>
+	    	        <p>To upload your documents, please visit: <a href="%s">Upload Documents</a></p>
+	    	    </body>
+	    	    </html>
+	    	    """.formatted(uploadUrlWithId);
+
+	    	return htmlTemplate;
+
+	}
+	
+	public String getEmailBodyApproved(Driver driver) {
+	    InsurancePlan insurance = driver.getInsurancePlan();
 	    String htmlTemplate = """
 	            <!DOCTYPE html>
 	            <html>
 	            <head>
-	                <title>Driver Confirmation</title>
+	                <title>Your insurance has been approved!</title>
 	            </head>
 	            <body>
 	                <h1>Your Driver and Insurance Details</h1>
@@ -82,7 +149,6 @@ public class EmailService {
 	                    <li>Premium: %s</li>
 	                    <li>Collision Deductible: %s</li>
 	                    <li>Uninsured Motorist Deductible: %s</li>
-	                    <p>To upload your documents, please visit: <a href="%s">Upload Documents</a></p>
 	                </ul>
 	            </body>
 	            </html>
@@ -96,11 +162,28 @@ public class EmailService {
 	                insurance.getPlanName(),
 	                insurance.getPremium(),
 	                insurance.getCollisionDeductible(),
-	                insurance.getUninsuredMotoristDeductible(),
-	                uploadUrlWithId
+	                insurance.getUninsuredMotoristDeductible()
 	            );
 
 	    return htmlTemplate;
+	}
+	
+	public String getEmailBodyRejected(Driver driver) {
+	    String htmlTemplate = """
+	    	    <!DOCTYPE html>
+	    	    <html>
+	    	    <head>
+	    	        <title>Your insurance application has been rejected.</title>
+	    	    </head>
+	    	    <body>
+	    	        <h1>Your Insurance Application Status</h1>
+	    	        <p>We regret to inform you that your insurance application has been rejected.</p>
+	    	        <p>To reapply for insurance, please visit: <a href="%s">Reapply for Insurance</a></p>
+	    	    </body>
+	    	    </html>
+	    	    """.formatted(reapplyUrl);
+
+	    	return htmlTemplate;
 	}
 
 

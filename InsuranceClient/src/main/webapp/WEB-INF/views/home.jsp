@@ -17,7 +17,8 @@
 		<td><a href="login?logout">Logout</a></td>
 		<sec:authorize access="hasAuthority('User')">
              <td><a href="#" id="checkPolicyLink">Check Policy</a></td>
-			 <td><a href="claim">Claim</a></td> 
+			 <td><a href="claim">Claim</a></td>
+			 <td><a href="help">Help</a></td> 
         </sec:authorize>
         
         <sec:authorize access="hasAuthority('Admin')">

@@ -47,16 +47,12 @@ public class PaymentController {
 	@PostMapping("/createEmail")
 	@CrossOrigin(origins = "http://localhost:8282")
 	public ResponseEntity<String> createEmail(@RequestBody Driver driver){
-		//driver.setStatus("Pending");
-		//System.out.println("status" + driver.getStatus());
 		try {
 			Driver savedDriver = driver;
 			System.out.println("savedDriver" + savedDriver);
 			
-			//JsonNode hotel = hotelService.findHotelById(savedBooking.getHotelId());
 			System.out.println("driverObj" + savedDriver);
 			if(savedDriver != null) {
-				//savedDriver.setHotelName(hotel.path("hotelName").asText());
 				System.out.println("savedDriver" + savedDriver.getId());
 				CompletableFuture.runAsync(() -> {
 					try {

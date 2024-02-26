@@ -29,6 +29,10 @@
                 <label for="reason">Reason:</label>
                 <textarea class="form-control" id="reason" name="reason"></textarea>
             </div>
+            <div class="form-group">
+			    <label for="mishapImages">Mishap Images:</label>
+			    <input type="file" class="form-control-file" id="mishapImages" name="mishapImages" accept="image/*" multiple>
+			</div>
             <button type="submit" class="btn btn-primary">Submit Claim</button>
         </form>
     </div>
@@ -37,29 +41,42 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function() {
-            $("#claimForm").submit(function(event) {
-                event.preventDefault();
-                
-                var formData = {
-                    policyNumber: $("#policyNumber").val(),
-                    amount: $("#claimAmount").val(),
-                    reason: $("#reason").val()
-                };
-				console.log(formData)
-                $.ajax({
-                    type: "POST",
-                    url: "http://localhost:8484/saveClaim",
-                    contentType: "application/json",
-                    data: JSON.stringify(formData),
-                    success: function(response) {
-                        alert("Claim submitted successfully!");
-                    },
-                    error: function(xhr, status, error) {
-                        alert("Error submitting claim: " + error);
-                    }
-                });
-            });
-        });
+		    $("#claimForm").submit(function(event) {
+		        event.preventDefault();
+		        
+		        var formData = new FormData(this); // Use FormData to serialize the form data
+		        
+		        // Append policyNumber, amount, and reason to FormData
+		        formData.append("policyNumber", $("#policyNumber").val());
+		        formData.append("amount", $("#claimAmount").val());
+		        
+		        // Append mishapImages to FormData
+		        var mishapImages = $("#mishapImages")[0].files;
+		        for (var i = 0; i < mishapImages.length; i++) {
+		            formData.append("mishapImages", mishapImages[i]);
+		        }
+		        
+		        console.log(formData);
+		        
+		        
+
+		        $.ajax({
+		            type: "POST",
+		            url: "http://localhost:8484/saveClaim",
+		            data: formData,
+		            async: false,
+		            cache: false,
+		            contentType: false,
+		            processData: false,
+		            success: function(response) {
+		                alert("Claim submitted successfully!");
+		            },
+		            error: function(xhr, status, error) {
+		                alert("Error submitting claim: " + error);
+		            }
+		        });
+		    });
+		});
     </script>
 </body>
 </html>

@@ -135,84 +135,113 @@
 
         
         function loadPendingClaims() {
-            $.ajax({
-                type: "GET",
-                url: "http://localhost:8484/getPendingClaims",
-                success: function(response) {
-                    $("#pendingClaims").empty();
+		    $.ajax({
+		        type: "GET",
+		        url: "http://localhost:8484/getPendingClaims",
+		        success: function(response) {
+		            $("#pendingClaims").empty();
+		
+		            $.each(response, function(index, claim) {
+		                var claimHtml = '<div class="card mt-4">' +
+		                    '<div class="card-body">' +
+		                    '<h2 class="card-title">Claim ID: ' + claim.id + '</h2>' +
+		                    '<p class="card-text"><strong>Policy Number:</strong> ' + claim.policyNumber + '</p>' +
+		                    '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
+		                    '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>' +
+		                    '<button class="btn btn-primary mr-2" onclick="approveClaim(' + claim.id + ')">Approve</button>' +
+		                    '<button class="btn btn-danger" onclick="rejectClaim(' + claim.id + ')">Reject</button>' +
+		                    '<button class="btn btn-info ml-2" onclick="reviewDriverDetails(' + claim.id + ', \'' + claim.policyNumber + '\')">Review Driver Details</button>' +
+		                    '</div>';
+		
+		                // Check if mishap images are available
+		                if (claim.mishapImage) {
+						    claimHtml += '<div class="mishap-images">';
+						    // Add mishap image to the claim card
+						    claimHtml += '<img src="data:image/jpeg;base64,' + claim.mishapImage + '" class="img-fluid" alt="Mishap Image">';
+						    claimHtml += '</div>';
+						}
 
-                    $.each(response, function(index, claim) {
-                        var claimHtml = '<div class="card mt-4">' +
-                            '<div class="card-body">' +
-                            '<h2 class="card-title">Claim ID: ' + claim.id + '</h2>' +
-                            '<p class="card-text"><strong>Policy Number:</strong> ' + claim.policyNumber + '</p>' +
-                            '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
-                            '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>' +
-                            '<button class="btn btn-primary mr-2" onclick="approveClaim(' + claim.id + ')">Approve</button>' +
-                            '<button class="btn btn-danger" onclick="rejectClaim(' + claim.id + ')">Reject</button>' +
-                            '<button class="btn btn-info ml-2" onclick="reviewDriverDetails(' + claim.id + ', \'' + claim.policyNumber + '\')">Review Driver Details</button>' +
-                            '</div>' +
-                            '</div>';
-                        $("#pendingClaims").append(claimHtml);
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching pending claims:", error);
-                }
-            });
-        }
+		
+		                claimHtml += '</div></div>';
+		                $("#pendingClaims").append(claimHtml);
+		            });
+		        },
+		        error: function(xhr, status, error) {
+		            console.error("Error fetching pending claims:", error);
+		        }
+		    });
+		}
 
         
         function loadApprovedClaims() {
-            $.ajax({
-                type: "GET",
-                url: "http://localhost:8484/getApprovedClaims",
-                success: function(response) {
-                    $("#approvedClaims").empty();
+		    $.ajax({
+		        type: "GET",
+		        url: "http://localhost:8484/getApprovedClaims",
+		        success: function(response) {
+		            $("#approvedClaims").empty();
+		
+		            $.each(response, function(index, claim) {
+		                var claimHtml = '<div class="card mt-4">' +
+		                    '<div class="card-body">' +
+		                    '<h2 class="card-title">Claim ID: ' + claim.id + '</h2>' +
+		                    '<p class="card-text"><strong>Policy Number:</strong> ' + claim.policyNumber + '</p>' +
+		                    '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
+		                    '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>';
+		
+		                // Check if mishap images are available
+		                if (claim.mishapImage) {
+						    claimHtml += '<div class="mishap-images">';
+						    // Add mishap image to the claim card
+						    claimHtml += '<img src="data:image/jpeg;base64,' + claim.mishapImage + '" class="img-fluid" alt="Mishap Image">';
+						    claimHtml += '</div>';
+						}
 
-                    $.each(response, function(index, claim) {
-                        var claimHtml = '<div class="card mt-4">' +
-                            '<div class="card-body">' +
-                            '<h2 class="card-title">Claim ID: ' + claim.id + '</h2>' +
-                            '<p class="card-text"><strong>Policy Number:</strong> ' + claim.policyNumber + '</p>' +
-                            '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
-                            '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>' +
-                            '</div>' +
-                            '</div>';
-                        $("#approvedClaims").append(claimHtml);
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching approved claims:", error);
-                }
-            });
-        }
+		
+		                claimHtml += '</div></div>';
+		                $("#approvedClaims").append(claimHtml);
+		            });
+		        },
+		        error: function(xhr, status, error) {
+		            console.error("Error fetching approved claims:", error);
+		        }
+		    });
+		}
+		
+		<!-- Update the loadRejectedClaims() function -->
+		function loadRejectedClaims() {
+		    $.ajax({
+		        type: "GET",
+		        url: "http://localhost:8484/getRejectedClaims",
+		        success: function(response) {
+		            $("#rejectedClaims").empty();
+		
+		            $.each(response, function(index, claim) {
+		                var claimHtml = '<div class="card mt-4">' +
+		                    '<div class="card-body">' +
+		                    '<h2 class="card-title">Claim ID: ' + claim.id + '</h2>' +
+		                    '<p class="card-text"><strong>Policy Number:</strong> ' + claim.policyNumber + '</p>' +
+		                    '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
+		                    '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>';
+		
+		                // Check if mishap images are available
+		                if (claim.mishapImage) {
+						    claimHtml += '<div class="mishap-images">';
+						    // Add mishap image to the claim card
+						    claimHtml += '<img src="data:image/jpeg;base64,' + claim.mishapImage + '" class="img-fluid" alt="Mishap Image">';
+						    claimHtml += '</div>';
+						}
 
-        
-        function loadRejectedClaims() {
-            $.ajax({
-                type: "GET",
-                url: "http://localhost:8484/getRejectedClaims",
-                success: function(response) {
-                    $("#rejectedClaims").empty();
+		
+		                claimHtml += '</div></div>';
+		                $("#rejectedClaims").append(claimHtml);
+		            });
+		        },
+		        error: function(xhr, status, error) {
+		            console.error("Error fetching rejected claims:", error);
+		        }
+		    });
+		}
 
-                    $.each(response, function(index, claim) {
-                        var claimHtml = '<div class="card mt-4">' +
-                            '<div class="card-body">' +
-                            '<h2 class="card-title">Claim ID: ' + claim.id + '</h2>' +
-                            '<p class="card-text"><strong>Policy Number:</strong> ' + claim.policyNumber + '</p>' +
-                            '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
-                            '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>' +
-                            '</div>' +
-                            '</div>';
-                        $("#rejectedClaims").append(claimHtml);
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching rejected claims:", error);
-                }
-            });
-        }
 
         
         $('#approved-tab').on('shown.bs.tab', function (e) {

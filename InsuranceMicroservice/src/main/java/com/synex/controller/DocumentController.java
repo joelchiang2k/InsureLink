@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synex.domain.Claim;
 import com.synex.domain.Company;
 import com.synex.domain.Document;
@@ -14,8 +16,11 @@ import com.synex.domain.InsurancePlan;
 import com.synex.service.CompanyService;
 import com.synex.service.DocumentService;
 import com.synex.service.DriverService;
+import com.synex.service.EmailService;
 import com.synex.service.InsurancePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +36,10 @@ public class DocumentController {
 	 
 	 @Autowired
 	 private DriverService driverService;
+	 
+	 @Autowired EmailService emailService;
+	 
+	 @Autowired ObjectMapper objectMapper;
 	 
 
 	    @PostMapping("/uploadDocument")
@@ -101,20 +110,72 @@ public class DocumentController {
 	    
 	    @PostMapping("/approveDocument")
 	    @CrossOrigin(origins = "http://localhost:8282")
-	    public void approveDocument(@RequestParam Long documentId) {
+	    public ResponseEntity<String> approveDocument(@RequestParam Long documentId, @RequestParam Long driverId) {
 	    	Document document = documentService.findById(documentId);
-	        document.setStatus("Approved");
-	                                             
+	    	Driver driver = driverService.findById(driverId);
+	        document.setStatus("Approved");                        
 	        documentService.save(document);
+	        
+	        try {
+				Driver savedDriver = driver;
+				System.out.println("savedDriver" + savedDriver);
+				
+				System.out.println("driverObj" + savedDriver);
+				if(savedDriver != null) {
+					System.out.println("savedDriver" + savedDriver.getId());
+					CompletableFuture.runAsync(() -> {
+						try {
+							emailService.sendDriverApproval(savedDriver);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+					
+					String savedDriverJson = objectMapper.writeValueAsString(savedDriver);
+					return ResponseEntity.status(HttpStatus.CREATED).body(savedDriverJson);
+				} else {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No drivers for the specified criteria.");
+				}
+			} catch (IOException e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JSON data: " + e.getMessage());
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating driver: " + e.getMessage());
+			}
 	    }
 	    
 	    @PostMapping("/rejectDocument")
 	    @CrossOrigin(origins = "http://localhost:8282")
-	    public void rejectDocument(@RequestParam Long documentId) {
+	    public ResponseEntity<String> rejectDocument(@RequestParam Long documentId, @RequestParam Long driverId) {
 	    	Document document = documentService.findById(documentId);
-	        document.setStatus("Rejected");
-	                                             
+	    	Driver driver = driverService.findById(driverId);
+	        document.setStatus("Rejected");       
 	        documentService.save(document);
+	        
+	        try {
+				Driver savedDriver = driver;
+				System.out.println("savedDriver" + savedDriver);
+				
+				System.out.println("driverObj" + savedDriver);
+				if(savedDriver != null) {
+					System.out.println("savedDriver" + savedDriver.getId());
+					CompletableFuture.runAsync(() -> {
+						try {
+							emailService.sendDriverRejection(savedDriver);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+					
+					String savedDriverJson = objectMapper.writeValueAsString(savedDriver);
+					return ResponseEntity.status(HttpStatus.CREATED).body(savedDriverJson);
+				} else {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No drivers for the specified criteria.");
+				}
+			} catch (IOException e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JSON data: " + e.getMessage());
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating driver: " + e.getMessage());
+			}
 	    }
 	    
 	    @PostMapping("/getDriverDetails")
