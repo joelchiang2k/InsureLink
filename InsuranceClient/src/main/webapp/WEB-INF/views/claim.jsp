@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,9 +11,15 @@
 </head>
 <td><a href="login?logout">Logout</a></td>
 		<sec:authorize access="hasAuthority('User')">
-             <td><a href="Home">Home</a></td>
-			 <td><a href="claim">Claim</a></td> 
-</sec:authorize>
+			 <td><a href="Home">Home</a></td>
+			 <td><a href="claim">Claim</a></td>
+			 <td><a href="help">Help</a></td> 
+        </sec:authorize>
+        
+        <sec:authorize access="hasAuthority('Admin')">
+             <td><a href="reviewClaim">Review Claim</a></td>
+			 <td><a href="reviewDoc">Review Document</a></td> 
+        </sec:authorize>
 <body>
     <div class="container">
         <h1 class="mt-4 mb-4">Claim Intimation</h1>

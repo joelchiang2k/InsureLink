@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class ChatGptController {
 
-    private final String chatGPTApiKey = "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";
+    private final String chatGPTApiKey = "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";
     private final String chatGPTApiUrl = "https://api.openai.com/v1/chat/completions";
 
     @PostMapping("/ask")
@@ -24,22 +24,22 @@ public class ChatGptController {
         RestTemplate restTemplate = new RestTemplate();
         System.out.println("question" + question);
         
-        // Set up headers with your API key
+       
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + chatGPTApiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
         
-        // Set up request body with the user's question
+        
         String requestBody = "{\"model\": \"gpt-3.5-turbo-1106\", \"messages\": [{\"role\": \"user\", \"content\": " + question + "}], \"max_tokens\": 150}";        
         System.out.println("requestBody" + requestBody);
-        // Make a POST request to the ChatGPT API
+        
         ResponseEntity<String> response = restTemplate.exchange(
                 chatGPTApiUrl,
                 HttpMethod.POST,
                 new HttpEntity<>(requestBody, headers),
                 String.class);
         System.out.println("response" + response);
-        // Return the response body to the frontend
+        
         return extractContentFromResponse(response.getBody());
     }
     

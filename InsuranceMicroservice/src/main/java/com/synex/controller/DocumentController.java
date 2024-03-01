@@ -113,6 +113,7 @@ public class DocumentController {
 	    public ResponseEntity<String> approveDocument(@RequestParam Long documentId, @RequestParam Long driverId) {
 	    	Document document = documentService.findById(documentId);
 	    	Driver driver = driverService.findById(driverId);
+	    	driver.setStatus("Approved");
 	        document.setStatus("Approved");                        
 	        documentService.save(document);
 	        
@@ -148,6 +149,7 @@ public class DocumentController {
 	    public ResponseEntity<String> rejectDocument(@RequestParam Long documentId, @RequestParam Long driverId) {
 	    	Document document = documentService.findById(documentId);
 	    	Driver driver = driverService.findById(driverId);
+	    	driver.setStatus("Rejected");
 	        document.setStatus("Rejected");       
 	        documentService.save(document);
 	        

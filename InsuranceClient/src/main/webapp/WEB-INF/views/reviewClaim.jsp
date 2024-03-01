@@ -32,23 +32,23 @@
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
                 <div id="pendingClaims" class="mt-4">
-                    <!-- Pending claims will be dynamically loaded here -->
+                    
                 </div>
             </div>
             <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
                 <div id="approvedClaims" class="mt-4">
-                    <!-- Approved claims will be dynamically loaded here -->
+                   
                 </div>
             </div>
             <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
                 <div id="rejectedClaims" class="mt-4">
-                    <!-- Rejected claims will be dynamically loaded here -->
+                    
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for driver details -->
+  
     <div class="modal fade" id="driverModal" tabindex="-1" role="dialog" aria-labelledby="driverModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -59,7 +59,7 @@
                     </button>
                 </div>
                 <div class="modal-body" id="driverDetailsBody">
-                    <!-- Driver details will be dynamically loaded here -->
+                    
                 </div>
             </div>
         </div>
@@ -68,6 +68,7 @@
     <script>
         
         function reviewDriverDetails(claimId, policyNumber) {
+        	console.log(typeof(policyNumber))
             $.ajax({
                 type: "GET",
                 url: "http://localhost:8484/findDriverByPolicyNumber",
@@ -97,38 +98,68 @@
         }
         
         
-        function approveClaim(claimId) {
-            $.ajax({
-                type: "POST",
-                url: "http://localhost:8484/approveClaim",
-                data: { claimId: claimId },
-                success: function(response) {
-                    loadPendingClaims();
-                    alert("Claim approved successfully!");
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error approving claim:", error);
-                    alert("Error approving claim: " + error);
-                }
-            });
-        }
-
-        
-        function rejectClaim(claimId) {
-            $.ajax({
-                type: "POST",
-                url: "http://localhost:8484/rejectClaim",
-                data: { claimId: claimId },
-                success: function(response) {
-                    loadPendingClaims();
-                    alert("Claim rejected successfully!");
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error rejecting claim:", error);
-                    alert("Error rejecting claim: " + error);
-                }
-            });
-        }
+        function approveClaim(claimId, policyNumber) {
+        	console.log(typeof(policyNumber))
+		    $.ajax({
+		        type: "GET",
+		        url: "http://localhost:8484/findDriverByPolicyNumber",
+		        data: {
+		            policyNumber: policyNumber
+		        },
+		        success: function(response) {
+		        	console.log(response.id);
+		            $.ajax({
+		                type: "POST",
+		                url: "http://localhost:8484/approveClaim?claimId=" + claimId,
+		                data: { driverId: response.id },
+		                success: function(response) {
+		                 
+		                    loadPendingClaims();
+		                    alert("Claim approved successfully!");
+		                },
+		                error: function(xhr, status, error) {
+		                    console.error("Error approving claim:", error);
+		                    alert("Error approving claim: " + error);
+		                }
+		            });
+		        },
+		        error: function(xhr, status, error) {
+		            console.error("Error finding driver:", error);
+		            alert("Error finding driver: " + error);
+		        }
+		    });
+		}
+		
+		function rejectClaim(claimId, policyNumber) {
+		   
+		    $.ajax({
+		        type: "GET",
+		        url: "http://localhost:8484/findDriverByPolicyNumber",
+		        data: {
+		            policyNumber: policyNumber
+		        },
+		        success: function(response) {
+		        
+		            $.ajax({
+		                type: "POST",
+		                url: "http://localhost:8484/rejectClaim?claimId=" + claimId,
+		                data: { driverId: response.id },
+		                success: function(response) {
+		                    loadPendingClaims();
+		                    alert("Claim rejected successfully!");
+		                },
+		                error: function(xhr, status, error) {
+		                    console.error("Error rejecting claim:", error);
+		                    alert("Error rejecting claim: " + error);
+		                }
+		            });
+		        },
+		        error: function(xhr, status, error) {
+		            console.error("Error finding driver:", error);
+		            alert("Error finding driver: " + error);
+		        }
+		    });
+		}
 
         
         loadPendingClaims();
@@ -148,8 +179,8 @@
 		                    '<p class="card-text"><strong>Policy Number:</strong> ' + claim.policyNumber + '</p>' +
 		                    '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
 		                    '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>' +
-		                    '<button class="btn btn-primary mr-2" onclick="approveClaim(' + claim.id + ')">Approve</button>' +
-		                    '<button class="btn btn-danger" onclick="rejectClaim(' + claim.id + ')">Reject</button>' +
+		                    '<button class="btn btn-primary mr-2" onclick="approveClaim(' + claim.id + ', \'' + claim.policyNumber + '\')">Approve</button>' +
+							'<button class="btn btn-danger" onclick="rejectClaim(' + claim.id + ', \'' + claim.policyNumber + '\')">Reject</button>' +
 		                    '<button class="btn btn-info ml-2" onclick="reviewDriverDetails(' + claim.id + ', \'' + claim.policyNumber + '\')">Review Driver Details</button>' +
 		                    '</div>';
 		
@@ -188,7 +219,7 @@
 		                    '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
 		                    '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>';
 		
-		                // Check if mishap images are available
+		                
 		                if (claim.mishapImage) {
 						    claimHtml += '<div class="mishap-images">';
 						    // Add mishap image to the claim card
@@ -207,7 +238,6 @@
 		    });
 		}
 		
-		<!-- Update the loadRejectedClaims() function -->
 		function loadRejectedClaims() {
 		    $.ajax({
 		        type: "GET",
@@ -223,10 +253,10 @@
 		                    '<p class="card-text"><strong>Claim Amount:</strong> ' + claim.amount + '</p>' +
 		                    '<p class="card-text"><strong>Reason:</strong> ' + claim.reason + '</p>';
 		
-		                // Check if mishap images are available
+		                
 		                if (claim.mishapImage) {
 						    claimHtml += '<div class="mishap-images">';
-						    // Add mishap image to the claim card
+						   
 						    claimHtml += '<img src="data:image/jpeg;base64,' + claim.mishapImage + '" class="img-fluid" alt="Mishap Image">';
 						    claimHtml += '</div>';
 						}

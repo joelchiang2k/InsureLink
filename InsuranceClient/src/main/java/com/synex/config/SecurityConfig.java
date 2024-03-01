@@ -71,7 +71,7 @@ public class SecurityConfig {
 		http
 		.apply(MyCustomDsl.customDsl()).flag(true).and()
 		.authorizeRequests().requestMatchers("/", "/home","/Home").permitAll().and()
-		.authorizeRequests().requestMatchers("/confirmBooking")
+		.authorizeRequests().requestMatchers("/Home")
 		.hasAnyAuthority("User","Admin").and().formLogin().loginPage("/login").defaultSuccessUrl("/Home")
 		.permitAll().and().logout().logoutSuccessUrl("/login?logout").invalidateHttpSession(true)
 		.deleteCookies("JSESSIONID").permitAll();

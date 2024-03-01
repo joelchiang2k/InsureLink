@@ -3,8 +3,10 @@ package com.synex.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synex.domain.Claim;
 import com.synex.domain.Company;
 import com.synex.domain.Driver;
@@ -12,6 +14,7 @@ import com.synex.domain.InsurancePlan;
 import com.synex.service.ClaimService;
 import com.synex.service.CompanyService;
 import com.synex.service.DriverService;
+import com.synex.service.EmailService;
 import com.synex.service.InsurancePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +36,10 @@ public class ClaimController {
     
     @Autowired
     private DriverService driverService;
+    
+    @Autowired EmailService emailService;
+	 
+	@Autowired ObjectMapper objectMapper;
 
     @PostMapping("/saveClaim")
     @CrossOrigin(origins = "http://localhost:8282")
@@ -41,16 +48,16 @@ public class ClaimController {
                                             @RequestParam("reason") String reason,
                                             @RequestPart("mishapImages") MultipartFile mishapImages) {
         try {
-            // Retrieve or create the driver object and set claim status
+       
             Driver driver = driverService.findById(policyNumber);
             if (driver == null) {
-                // Handle case where driver is not found
+               
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Driver not found");
             }
             driver.setClaimStatus("Pending");
             driverService.save(driver);
             
-            // Create a new claim object
+            
             byte[] mishapImagesBytes = mishapImages.getBytes();
             Claim claim = new Claim(mishapImagesBytes);
             claim.setPolicyNumber(policyNumber);
@@ -59,9 +66,7 @@ public class ClaimController {
             claim.setReason(reason);
             claim.setClaimStatus("Pending");
 
-            
 
-            // Save the claim after adding all mishap images
             claimService.save(claim);
             
             return ResponseEntity.ok("Claim saved successfully");
@@ -115,20 +120,70 @@ public class ClaimController {
     
     @PostMapping("/approveClaim")
     @CrossOrigin(origins = "http://localhost:8282")
-    public void approveClaim(@RequestParam Long claimId) {
-    	Claim claim = claimService.findById(claimId);
+    public ResponseEntity<String> approveClaim(@RequestParam Long claimId, @RequestParam Long driverId) {
+    	Driver driver = driverService.findById(driverId);
+    	System.out.println("Driver" + driver.toString());
+    	Long claimIdLong = Long.valueOf(claimId);
+    	Claim claim = claimService.findById(claimIdLong);
         claim.setClaimStatus("Approved");
-                                             
+        System.out.println("Amount" + claim.getAmount());
+        if(claim.getAmount() instanceof Long) {
+			System.out.println("coverageAmount is Long");
+		}
         claimService.save(claim);
+        try {
+			Driver savedDriver = driver;
+			if(savedDriver != null) {
+				System.out.println("savedDriver" + savedDriver.getId());
+				CompletableFuture.runAsync(() -> {
+					try {
+						emailService.sendEmailBodyClaimApproval(savedDriver, claim.getAmount());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+				
+				String savedDriverJson = objectMapper.writeValueAsString(savedDriver);
+				return ResponseEntity.status(HttpStatus.CREATED).body(savedDriverJson);
+			} else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No drivers for the specified criteria.");
+			}
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JSON data: " + e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating driver: " + e.getMessage());
+		}
     }
     
     @PostMapping("/rejectClaim")
     @CrossOrigin(origins = "http://localhost:8282")
-    public void rejectClaim(@RequestParam Long claimId) {
+    public ResponseEntity<String>  rejectClaim(@RequestParam Long claimId, @RequestParam Long driverId) {
+    	Driver driver = driverService.findById(driverId);
     	Claim claim = claimService.findById(claimId);
-        claim.setClaimStatus("Rejected");
-                                             
+        claim.setClaimStatus("Rejected");                              
         claimService.save(claim);
+        try {
+			Driver savedDriver = driver;
+			if(savedDriver != null) {
+				System.out.println("savedDriver" + savedDriver.getId());
+				CompletableFuture.runAsync(() -> {
+					try {
+						emailService.sendEmailBodyClaimRejection(savedDriver, claim.getAmount());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+				
+				String savedDriverJson = objectMapper.writeValueAsString(savedDriver);
+				return ResponseEntity.status(HttpStatus.CREATED).body(savedDriverJson);
+			} else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No drivers for the specified criteria.");
+			}
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JSON data: " + e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating driver: " + e.getMessage());
+		}
     }
     
     @GetMapping("/findDriverByPolicyNumber")

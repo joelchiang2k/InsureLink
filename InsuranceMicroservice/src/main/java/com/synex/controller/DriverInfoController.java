@@ -61,10 +61,10 @@ public class DriverInfoController {
     	driver.setInsurancePlan(insurancePlan);
         
       
-    	// Save the driver information
+    
         Driver savedDriver = driverService.save(driver);
         
-        // Return the driverId in the response
+
         return ResponseEntity.ok(savedDriver.getId());
     }
     

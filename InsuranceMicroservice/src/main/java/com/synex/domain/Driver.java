@@ -51,7 +51,15 @@ public class Driver {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @Override
+	public String toString() {
+		return "Driver [id=" + id + ", name=" + name + ", status=" + status + ", claimStatus=" + claimStatus
+				+ ", userId=" + userId + ", age=" + age + ", drivingRecord=" + drivingRecord + ", vehicleValue="
+				+ vehicleValue + ", address=" + address + ", insurancePlan=" + insurancePlan + ", vehicle=" + vehicle
+				+ "]";
+	}
+
+	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "insurancePlan_id", referencedColumnName = "insurancePlanId")
     private InsurancePlan insurancePlan;
     

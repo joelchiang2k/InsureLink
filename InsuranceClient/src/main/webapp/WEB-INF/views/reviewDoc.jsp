@@ -33,17 +33,17 @@
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
                 <div id="pendingDocuments" class="mt-4">
-                    <!-- Pending documents will be dynamically loaded here -->
+                 
                 </div>
             </div>
             <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
                 <div id="approvedDocuments" class="mt-4">
-                    <!-- Approved documents will be dynamically loaded here -->
+                    
                 </div>
             </div>
             <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
                 <div id="rejectedDocuments" class="mt-4">
-                    <!-- Rejected documents will be dynamically loaded here -->
+                   
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
 	        </button>
 	      </div>
 	      <div class="modal-body" id="driverDetailsBody">
-	        <!-- Driver details will be loaded here -->
+	        
 	      </div>
 	    </div>
 	  </div>
@@ -80,14 +80,14 @@
 		                    '<p class="card-text"><strong>Document Name:</strong> ' + document.fileName + '</p>' +
 		                    '<p class="card-text"><strong>Status:</strong> ' + document.status + '</p>';
 		
-		                // Check if the document is an image
+		   
 		                if (document.fileName.endsWith(".jpg") || document.fileName.endsWith(".png") || document.fileName.endsWith(".jpeg")) {
 		                    documentHtml += '<img src="data:image/jpeg;base64,' + document.driverLicense + '" class="img-fluid" alt="Document">';
 		                } else {
 		                    documentHtml += '<p class="card-text"><strong>Document Data:</strong> ' + document.driverLicense + '</p>';
 		                }
 		
-		                // Add approve and reject buttons
+		              
 		                if (status === "pending") {
 						    documentHtml += '<button class="btn btn-success mr-2" onclick="approveDocument(' + document.id + ', \'' + document.driver.id + '\')">Approve</button>' +
 						                    '<button class="btn btn-danger" onclick="rejectDocument(' + document.id + ', \'' + document.driver.id + '\')">Reject</button>' +
@@ -107,10 +107,10 @@
 		    });
 		}
 		
-		// Function to show driver details
+		
 		function showDriverDetails(driverId) {
 			console.log("driverId", driverId)
-	        // Perform an AJAX request to fetch driver details by driverId
+	       
 	        $.ajax({
 	            type: "POST",
 	            url: "http://localhost:8484/getDriverDetails",
@@ -141,16 +141,16 @@
 	        });
 	    }
 	
-	    // Define approve and reject functions outside of $(document).ready()
+	  
 	    function approveDocument(documentId, driverId) {
 	        $.ajax({
 	            type: "POST",
 	            url: "http://localhost:8484/approveDocument",
 	            data: { documentId: documentId, driverId: driverId},
 	            success: function(response) {
-	                // Reload the approved documents tab
+	          
 	                loadDocuments("approved", "#approvedDocuments");
-	                // Remove the document from the pending tab
+	        
 	                $("#pendingDocuments").find(".card[data-id='" + documentId + "']").remove();
 	            },
 	            error: function(xhr, status, error) {
@@ -165,9 +165,9 @@
 	            url: "http://localhost:8484/rejectDocument",
 	            data: { documentId: documentId, driverId: driverId},
 	            success: function(response) {
-	                // Reload the rejected documents tab
+	              
 	                loadDocuments("rejected", "#rejectedDocuments");
-	                // Remove the document from the pending tab
+	                
 	                $("#pendingDocuments").find(".card[data-id='" + documentId + "']").remove();
 	            },
 	            error: function(xhr, status, error) {
@@ -176,7 +176,7 @@
 	        });
 	    }
 	
-	    // Load documents when the page is ready
+
 	    loadDocuments("pending", "#pendingDocuments");
 	    loadDocuments("approved", "#approvedDocuments");
 	    loadDocuments("rejected", "#rejectedDocuments");

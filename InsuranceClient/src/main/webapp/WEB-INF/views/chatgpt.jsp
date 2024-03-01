@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -93,7 +94,7 @@
 		<td></td>
 		<td><a href="login?logout">Logout</a></td>
 		<sec:authorize access="hasAuthority('User')">
-             <td><a href="#" id="checkPolicyLink">Check Policy</a></td>
+			 <td><a href="Home">Home</a></td>
 			 <td><a href="claim">Claim</a></td> 
 			 <td><a href="help">Help</a></td> 
         </sec:authorize>
@@ -111,7 +112,7 @@
     </header>
     <main>
         <div id="responseArea" class="message-container">
-            <!-- Chat messages will be displayed here -->
+            
         </div>
         <div class="help-form">
             <h2>Need Help?</h2>
@@ -124,27 +125,26 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Handle form submission
+           
             $("#helpForm").submit(function(event) {
                 event.preventDefault();
                 
-                // Get user input
+               
                 var question = $("#question").val();
                 
-                // Call function to get response from ChatGPT API
+               
                 getChatGPTResponse(question);
                 
-                // Clear input field
+                
                 $("#question").val('');
             });
         });
 
         function getChatGPTResponse(question) {
-            // Your ChatGPT API endpoint
-            //var apiUrl = "YOUR_API_ENDPOINT_HERE";
+            
+          
             console.log(question);
 
-            // Make AJAX request to ChatGPT API
             $.ajax({
                 url: "http://localhost:8484/ask",
                 type: "POST",
@@ -152,7 +152,6 @@
                 data: JSON.stringify(question),
                 success: function(response) {
                     console.log(response);
-                    // Display response in responseArea
                     appendMessage(response, 'assistant');
                 },
                 error: function(xhr, status, error) {
@@ -168,7 +167,6 @@
             messageContainer.append(messageElement);
             $("#responseArea").append(messageContainer);
 
-            // Scroll to bottom
             $("#responseArea").scrollTop($("#responseArea")[0].scrollHeight);
         }
     </script>

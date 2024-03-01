@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Form</title>
-    <!-- Include jQuery -->
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -128,11 +128,11 @@
 			    dataType: 'json',
 			    success: function(data) {
 			        console.log(data.insurancePlan);
-			        // Populate HTML form with retrieved data
+			        
 			       $('#price').text("$" + data.insurancePlan.premium);
 			       $('#company').text(data.insurancePlan.company);
 			       $('#insuranceType').text(data.insurancePlan.insuranceType);
-			        // Assuming insurancePlan is an object, not an array
+			      
 			       $('#insurance-plan').text(data.insurancePlan.planName);
 			       $('#description').text(data.insurancePlan.description);
 			    },

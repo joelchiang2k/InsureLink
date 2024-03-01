@@ -39,12 +39,12 @@ public class EmailService {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
             
-            // Create the text part of the email
+       
             helper.setTo(address.getEmail());
             helper.setSubject("Upload documents for verification.");
-            helper.setText(getEmailBodyPending(driver), true); // Set HTML content
+            helper.setText(getEmailBodyPending(driver), true); 
             
-            // Send the email
+     
             javaMailSender.send(message);
         } catch (Exception e) {
             System.err.println("Email Sending Exception: " + e.getMessage());
@@ -56,7 +56,6 @@ public class EmailService {
 		Address address = driver.getAddress();
 		System.out.println(driver.getId());
 		System.out.println("email" + driver.getAddress().getEmail());
-		//System.out.println("booking.getUser" + booking.getUserEmail());
 		try {
 			MimeMessage message = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -85,6 +84,54 @@ public class EmailService {
 	}
 	
 	@Async
+	public void sendEmailBodyClaimApproval(Driver driver, Long coverageAmount) {
+		if(coverageAmount instanceof Long) {
+			System.out.println("coverageAmount is Long");
+		}
+		Address address = driver.getAddress();
+        System.out.println(driver.getId());
+        System.out.println("email" + driver.getAddress().getEmail());
+        
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            
+          
+            helper.setTo(address.getEmail());
+            helper.setSubject("Congratulaions! Your insurance claim has been approved.");
+            System.out.println("First");
+            helper.setText(getEmailBodyClaimApproval(driver, coverageAmount), true); 
+            System.out.println("Last");
+           
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Email Sending Exception: " + e.getMessage());
+        }
+	}
+	
+	@Async
+	public void sendEmailBodyClaimRejection(Driver driver, Long coverageAmount) {
+		Address address = driver.getAddress();
+        System.out.println(driver.getId());
+        System.out.println("email" + driver.getAddress().getEmail());
+        
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            
+          
+            helper.setTo(address.getEmail());
+            helper.setSubject("Unforunately! Your insurance claim has been rejected.");
+            helper.setText(getEmailBodyClaimRejection(driver, coverageAmount), true); 
+            
+           
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Email Sending Exception: " + e.getMessage());
+        }
+	}
+	
+	@Async
 	public void sendDriverRejection(Driver driver) {
 		Address address = driver.getAddress();
         System.out.println(driver.getId());
@@ -94,12 +141,12 @@ public class EmailService {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
             
-            // Create the text part of the email
+          
             helper.setTo(address.getEmail());
             helper.setSubject("Unforunately, your application has been rejected.");
-            helper.setText(getEmailBodyRejected(driver), true); // Set HTML content
+            helper.setText(getEmailBodyRejected(driver), true); 
             
-            // Send the email
+           
             javaMailSender.send(message);
         } catch (Exception e) {
             System.err.println("Email Sending Exception: " + e.getMessage());
@@ -184,6 +231,45 @@ public class EmailService {
 	    	    """.formatted(reapplyUrl);
 
 	    	return htmlTemplate;
+	}
+	
+	public String getEmailBodyClaimApproval(Driver driver, Long coverageAmount) {
+	    String htmlTemplate = """
+	        <!DOCTYPE html>
+	        <html>
+	        <head>
+	            <title>Your insurance claim has been approved!</title>
+	        </head>
+	        <body>
+	            <h1>Your Insurance Claim Approval</h1>
+	            <p>We are pleased to inform you that your insurance claim has been approved.</p>
+	            <p>The insurance company is willing to cover an amount of $%.2f.</p>
+	            <p>Thank you for choosing our insurance services.</p>
+	        </body>
+	        </html>
+	        """.formatted((double) coverageAmount);
+	    System.out.println("htmlTemplate" + htmlTemplate);
+	    return htmlTemplate;
+	}
+
+	
+	public String getEmailBodyClaimRejection(Driver driver, Long coverageAmount) {
+	    String htmlTemplate = """
+	        <!DOCTYPE html>
+	        <html>
+	        <head>
+	            <title>Your insurance claim has been rejected!</title>
+	        </head>
+	        <body>
+	            <h1>Your Insurance Claim Rejection</h1>
+	            <p>We regret to inform you that your insurance claim has been rejected.</p>
+	            <p>The company is not willing to cover $%.2f.</p>
+	            <p>Please review the policy terms and conditions for further details.</p>
+	        </body>
+	        </html>
+	        """.formatted((double) coverageAmount);
+
+	    return htmlTemplate;
 	}
 
 

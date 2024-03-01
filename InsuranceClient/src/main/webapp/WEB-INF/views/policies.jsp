@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,14 +13,19 @@
 </head>
 <td><a href="login?logout">Logout</a></td>
 		<sec:authorize access="hasAuthority('User')">
-             <td><a href="Home">Home</a></td>
-			 <td><a href="claim">Claim</a></td> 
-</sec:authorize>
+			 <td><a href="claim">Claim</a></td>
+			 <td><a href="help">Help</a></td> 
+        </sec:authorize>
+        
+        <sec:authorize access="hasAuthority('Admin')">
+             <td><a href="reviewClaim">Review Claim</a></td>
+			 <td><a href="reviewDoc">Review Document</a></td> 
+        </sec:authorize>
 <body>
     <div class="container">
         <h1 class="mt-4 mb-4">View Policies</h1>
         <div id="policies-container">
-            <!-- Policies will be dynamically loaded here -->
+           
         </div>
     </div>
 
@@ -30,9 +36,9 @@
         }
 
         var userIdString = getQueryParam('userId');
-
+		console.log(typeof(userIdString));
         $(document).ready(function() {
-            // Function to fetch and display policies
+      
             function fetchPolicies() {
                 $.ajax({
                     type: "POST",
@@ -41,13 +47,13 @@
                         userIdString: userIdString
                     },
                     success: function(response) {
-                        // Clear previous content
+                    
                         $("#policies-container").empty();
 
-                        // Iterate through policies and append them to the container
+                  
                         $.each(response, function(index, obj) {
                         	console.log(obj.id)
-                            // Construct the policy HTML
+                           
                             var policyHtml = '<div class="card mt-4">' +
                                 '<div class="card-body">' +
                                 '<h2 class="card-title">' + obj.name + '</h2>' +
@@ -66,7 +72,7 @@
                                 '</div>' +
                                 '</div>';
 
-                            // Append the policy HTML to the container
+                         
                             $("#policies-container").append(policyHtml);
                         });
                     },
@@ -76,7 +82,7 @@
                 });
             }
 
-            // Initial fetch of policies
+           
             fetchPolicies();
         });
     </script>

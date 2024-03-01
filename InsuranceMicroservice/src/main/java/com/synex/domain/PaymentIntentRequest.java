@@ -23,7 +23,7 @@ public class PaymentIntentRequest {
 	public PaymentIntentCreateParams toPaymentIntentParams() {
         PaymentIntentCreateParams.Builder builder = PaymentIntentCreateParams.builder()
                 .setPaymentMethod(paymentMethodId);
-                // You can set other parameters here as needed
+               
               
         return builder.build();
     }
